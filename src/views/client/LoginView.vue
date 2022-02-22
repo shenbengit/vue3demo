@@ -7,7 +7,8 @@
 <script lang="ts">
 import {defineComponent} from 'vue';
 import ClientLogin from '@/components/client/Login.vue';
-import {getAllUserInfo} from "@/util/request"
+import {httpGet, httpPost} from "@/util/http"
+import {ApiResponse, UserInfoBean, UserLoginBean} from "@/bean/ApiBean";
 
 export default defineComponent({
   name: "ClientLoginView",
@@ -34,7 +35,21 @@ export default defineComponent({
   },
   mounted() {
     console.log("login view - mounted")
-    getAllUserInfo()
+    httpGet<ApiResponse<UserInfoBean[]>>("/srs_rtc/user/getAllUserInfo")
+        .then((response) => {
+          //
+          console.log("httpGet:", response)
+        })
+    const login: UserLoginBean = {
+      userId: "test",
+      password: "1",
+      userType: "0"
+    }
+    httpPost<ApiResponse<UserInfoBean>, UserLoginBean>("/srs_rtc/user/userLogin", login).then(response => {
+      console.log("httpPost:", response)
+    }).then(error => {
+      //
+    })
   },
   beforeUnmount() {
     console.log("login view - beforeUnmount")

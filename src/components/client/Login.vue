@@ -36,7 +36,7 @@
             type="primary"
             style="width: 100%"
             @click="handleLogin"
-        >
+        >登录
         </el-button>
       </el-form-item>
     </el-form>
