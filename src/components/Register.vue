@@ -1,6 +1,6 @@
 <template>
-  <div>
-
+  <div class="register">
+    <h1>Client Register</h1>
   </div>
 </template>
 
@@ -8,8 +8,8 @@
 import {defineComponent} from "vue";
 
 export default defineComponent({
-  name: "ClientIndex"
-})
+  name: "ClientRegister"
+});
 
 </script>
 

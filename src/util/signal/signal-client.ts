@@ -6,7 +6,8 @@ import {ConnectionStatusCallback} from "@/util/signal/connection-status-callback
 
 export class SignalClient {
 
-    private static _instance: SignalClient
+    private static _instance: SignalClient;
+
     // private socket: Socket = null;
 
     private constructor() {
@@ -17,41 +18,42 @@ export class SignalClient {
         if (!SignalClient._instance) {
             SignalClient._instance = new SignalClient();
         }
-        return SignalClient._instance
+        return SignalClient._instance;
     }
 
-    private connectionStatusCallbackList: ConnectionStatusCallback[] = []
+    private connectionStatusCallbackList: ConnectionStatusCallback[] = [];
 
-    public connect(url: string) {
-        const socket = io(url);
+    public connect(userId: string) {
+        const baseUrl = process.env.VUE_APP_BASE_SIGNAL_URL;
+        const socket = io(`${baseUrl}/srs_rtc/signal/client?userId=${userId}`);
         // client-side
         socket.on("connect", () => {
             this.connectionStatusCallbackList.forEach(item => {
-                item.connected()
-            })
+                item.connected();
+            });
         }).on("connect_error", (err: Error) => {
             this.connectionStatusCallbackList.forEach(item => {
-                item.connectError(err)
-            })
+                item.connectError(err);
+            });
         }).on("disconnect", (reason: Socket.DisconnectReason) => {
             this.connectionStatusCallbackList.forEach(item => {
-                item.disconnected(reason)
-            })
-        })
-        socket.connect()
+                item.disconnected(reason);
+            });
+        });
+        socket.connect();
     }
 
     public addConnectionStatusCallback(callback?: ConnectionStatusCallback) {
         if (callback) {
-            this.connectionStatusCallbackList.push(callback)
+            this.connectionStatusCallbackList.push(callback);
         }
     }
 
     public removeConnectionStatusCallback(callback?: ConnectionStatusCallback) {
         if (callback) {
-            const index = this.connectionStatusCallbackList.indexOf(callback)
+            const index = this.connectionStatusCallbackList.indexOf(callback);
             if (index != -1) {
-                this.connectionStatusCallbackList.splice(index, 1)
+                this.connectionStatusCallbackList.splice(index, 1);
             }
         }
     }

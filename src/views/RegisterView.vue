@@ -5,22 +5,21 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
-import ClientRegister from '@/components/client/Register.vue';
-import {httpGet} from "@/util/http"
+import {defineComponent} from "vue";
+import ClientRegister from "@/components/Register.vue";
 
 export default defineComponent({
   name: "ClientRegisterView",
   data() {
-    return {}
+    return {};
   },
   components: {
-    ClientRegister,
+    ClientRegister
   },
   created() {
-    //
+    console.log(this.$route.query);
   }
-})
+});
 
 </script>
 

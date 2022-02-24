@@ -1,4 +1,4 @@
-import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from 'axios'
+import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from "axios";
 
 const config = {
     baseURL: /*读取配置文件*/process.env.VUE_APP_BASE_API_URL,
@@ -12,8 +12,8 @@ const requestInterceptor = (config: AxiosRequestConfig): AxiosRequestConfig => {
 };
 
 const http: AxiosInstance = axios.create(config);
-http.interceptors.request.use(requestInterceptor, error => Promise.reject(error))
-http.interceptors.response.use(response => Promise.resolve(response), error => Promise.reject(error))
+http.interceptors.request.use(requestInterceptor, error => Promise.reject(error));
+http.interceptors.response.use(response => Promise.resolve(response), error => Promise.reject(error));
 
 export function httpRequest<T>(config: AxiosRequestConfig): Promise<T> {
     const promise = http.request<T, AxiosResponse<T>>(config);
@@ -41,7 +41,7 @@ export function httpOptions<T>(url: string, config?: AxiosRequestConfig): Promis
 }
 
 export function httpPost<T, D>(url: string, data?: D, config?: AxiosRequestConfig): Promise<T> {
-    const promise = http.post<T, AxiosResponse<T>, D>(url, data, config)
+    const promise = http.post<T, AxiosResponse<T>, D>(url, data, config);
     return convertAxiosResponse(promise);
 }
 
@@ -61,9 +61,9 @@ export function httpPatch<T, D>(url: string, data?: D, config?: AxiosRequestConf
 function convertAxiosResponse<T>(axiosPromise: Promise<AxiosResponse<T>>): Promise<T> {
     return new Promise(function (resolve, reject) {
         axiosPromise.then(response => {
-            resolve(response.data)
+            resolve(response.data);
         }).then(err => {
-            reject(err)
+            reject(err);
         });
     });
 }

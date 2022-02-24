@@ -24,14 +24,12 @@
             clearable="clearable"
             auto-complete="off"
             placeholder="密码"
-            @keyup="handleLogin"
         >
         </el-input>
       </el-form-item>
 
       <el-form-item style="width: 100%">
         <el-button
-            :loading="loading"
             size="large"
             type="primary"
             style="width: 100%"
@@ -42,7 +40,8 @@
     </el-form>
 
     <div style="float: right">
-      <router-link class="link-type" style="color:#409eff;" :to="'/client/register'">立即注册
+      <router-link class="link-type" style="color:#409eff;" :to="{name:'clientRegister', query:{userType: userType}}">
+        立即注册
       </router-link>
     </div>
 
@@ -52,64 +51,82 @@
 <script lang="ts">
 
 import {defineComponent} from "vue";
+import {UserLoginEntity} from "@/bean/entity";
+import {ElMessage} from "element-plus";
 
 export default defineComponent({
   name: "ClientLogin",
+  props: {
+    /**
+     * 用户类型
+     */
+    userType: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
       codeUrl: "",
-      loginForm: {
-        userId: "",
-        password: "",
-        userType: 0
-      },
+      loginForm: new UserLoginEntity(),
       loginRules: {
         userId: [
-          {required: true, trigger: "blur", message: "请输入您的用户ID"},
+          {required: true, trigger: "blur", message: "请输入您的用户ID"}
         ],
         password: [
-          {required: true, trigger: "blur", message: "请输入您的密码"},
-        ],
-        code: [{required: true, trigger: "change", message: "请输入验证码"}],
-      },
-      loading: false,
-      // 验证码开关
-      captchaOnOff: true,
-      // 注册开关
-      register: false,
-      redirect: undefined,
-    }
+          {required: true, trigger: "blur", message: "请输入您的密码"}
+        ]
+      }
+    };
   },
   methods: {
-    handleLogin() {
-      console.log("login  - onSubmit")
+    showWarningMessage(msg: string) {
+      ElMessage({
+        showClose: true,
+        message: msg,
+        type: "warning",
+        center: true
+      });
     },
+    handleLogin() {
+      if (this.loginForm.userId === "") {
+        this.showWarningMessage("请输入您的用户ID");
+        return;
+      }
+      if (this.loginForm.password === "") {
+        this.showWarningMessage("请输入您的密码");
+        return;
+      }
+      this.loginForm.userType = this.userType;
+      //与父组件通信
+      this.$emit("handleLogin", this.loginForm);
+    }
   },
   beforeCreate() {
-    console.log("login  - beforeCreate")
+    console.log("login  - beforeCreate", this.$props);
   },
   created() {
-    console.log("login  - created")
+    console.log("login  - created", this.$props);
   },
   beforeMount() {
-    console.log("login  - beforeMount")
+    console.log("login  - beforeMount", this.$props);
   },
   beforeUpdate() {
-    console.log("login  - beforeUpdate")
+    console.log("login  - beforeUpdate", this.$props);
   },
   updated() {
-    console.log("login  - updated")
+    console.log("login  - updated", this.$props);
   },
   mounted() {
-    console.log("login  - mounted")
+    console.log("login  - mounted", this.$props);
   },
   beforeUnmount() {
-    console.log("login  - beforeUnmount")
+    console.log("login  - beforeUnmount");
   },
   unmounted() {
-    console.log("login  - unmounted")
+    console.log("login  - unmounted");
   }
-})
+});
 
 </script>
 
@@ -165,10 +182,5 @@ export default defineComponent({
   height: 38px;
 }
 
-.register {
-  color: #409eff;
-  text-align: right;
-  line-height: 20px;
-  cursor: pointer;
-}
+
 </style>
