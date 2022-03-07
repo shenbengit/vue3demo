@@ -7,16 +7,14 @@
 <script lang="ts">
 import {defineComponent} from "vue";
 import ClientLogin from "@/components/Login.vue";
-import {httpGet, httpPost} from "@/util/http";
-import {ApiResponse, UserInfoBean, UserLoginBean} from "@/bean/api-bean";
+import {UserLoginBean} from "@/bean/api-bean";
 import {UserLoginEntity} from "@/bean/entity";
-import {ElLoading} from "element-plus";
+import {ElMessage, ElLoading} from "element-plus";
 import {userLogin} from "@/api/user-api";
-import {ElMessage} from "element-plus/es";
 import {RESULT_OK} from "@/constant/constant";
 
 export default defineComponent({
-  name: "ClientLoginView",
+  name: "LoginView",
   data() {
     return {
       userType: "0"
@@ -27,26 +25,23 @@ export default defineComponent({
   },
   methods: {
     showWarningMessage(msg: string) {
-      ElMessage({
+      ElMessage.warning({
         showClose: true,
         message: msg,
-        type: "warning",
         center: true
       });
     },
     showErrorMessage(msg: string) {
-      ElMessage({
+      ElMessage.error({
         showClose: true,
         message: msg,
-        type: "error",
         center: true
       });
     },
     showSuccessMessage(msg: string) {
-      ElMessage({
+      ElMessage.success({
         showClose: true,
         message: msg,
-        type: "success",
         center: true
       });
     },
@@ -72,7 +67,7 @@ export default defineComponent({
         }
       }).catch(error => {
         loading.close();
-        this.showWarningMessage("登录异常：" + error);
+        this.showErrorMessage("登录异常：" + error);
       });
     }
   },
@@ -93,11 +88,6 @@ export default defineComponent({
   },
   mounted() {
     console.log("login view - mounted");
-    httpGet<ApiResponse<UserInfoBean[]>>("/srs_rtc/user/getAllUserInfo")
-        .then((response) => {
-          //
-          console.log("httpGet:", response);
-        });
   },
   beforeUnmount() {
     console.log("login view - beforeUnmount");

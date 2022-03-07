@@ -1,6 +1,6 @@
 <template>
   <div class="login-form">
-    <h3 class="title">SrsRtcWebClient登录</h3>
+    <h3 class="title">{{ userType === clientType ? "Client" : "Administrator" }} Login</h3>
 
     <el-form
         ref="loginForm"
@@ -27,20 +27,19 @@
         >
         </el-input>
       </el-form-item>
-
-      <el-form-item style="width: 100%">
-        <el-button
-            size="large"
-            type="primary"
-            style="width: 100%"
-            @click="handleLogin"
-        >登录
-        </el-button>
-      </el-form-item>
     </el-form>
 
-    <div style="float: right">
-      <router-link class="link-type" style="color:#409eff;" :to="{name:'clientRegister', query:{userType: userType}}">
+    <el-button
+        size="large"
+        type="primary"
+        style="width: 100%;margin-top: 15px"
+        @click="handleLogin"
+
+    >登录
+    </el-button>
+
+    <div style="float: right;margin-top: 20px">
+      <router-link class="link-type" style="color:#409eff;" :to="{name:'register', query:{userType: userType}}">
         立即注册
       </router-link>
     </div>
@@ -53,9 +52,10 @@
 import {defineComponent} from "vue";
 import {UserLoginEntity} from "@/bean/entity";
 import {ElMessage} from "element-plus";
+import {USER_TYPE_ADMINISTRATOR, USER_TYPE_CLIENT} from "@/constant/constant";
 
 export default defineComponent({
-  name: "ClientLogin",
+  name: "UserLogin",
   props: {
     /**
      * 用户类型
@@ -67,7 +67,8 @@ export default defineComponent({
   },
   data() {
     return {
-      codeUrl: "",
+      clientType: USER_TYPE_CLIENT,
+      administrator: USER_TYPE_ADMINISTRATOR,
       loginForm: new UserLoginEntity(),
       loginRules: {
         userId: [
@@ -142,7 +143,7 @@ export default defineComponent({
   border-radius: 6px;
   background: #ffffff;
   width: 400px;
-  padding: 25px 25px 5px 25px;
+  padding: 25px 25px 25px 25px;
 
   .el-input {
     height: 38px;

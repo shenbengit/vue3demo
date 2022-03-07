@@ -25,3 +25,29 @@ export interface UserLoginBean {
     userType: string;
 }
 
+/**
+ * 校验用户id是否可用
+ */
+export interface CheckUserIdBean {
+    userId: string;
+    /**
+     * 客户端：0
+     * 管理端：1
+     */
+    userType: string;
+}
+
+/**
+ * 注册使用
+ */
+export interface UserRegisterBean {
+    userId: string;
+    username: string;
+    password: string;
+    /**
+     * 客户端：0
+     * 管理端：1
+     */
+    userType: string;
+}
+
