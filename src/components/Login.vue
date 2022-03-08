@@ -102,30 +102,6 @@ export default defineComponent({
       //与父组件通信
       this.$emit("handleLogin", this.loginForm);
     }
-  },
-  beforeCreate() {
-    console.log("login  - beforeCreate", this.$props);
-  },
-  created() {
-    console.log("login  - created", this.$props);
-  },
-  beforeMount() {
-    console.log("login  - beforeMount", this.$props);
-  },
-  beforeUpdate() {
-    console.log("login  - beforeUpdate", this.$props);
-  },
-  updated() {
-    console.log("login  - updated", this.$props);
-  },
-  mounted() {
-    console.log("login  - mounted", this.$props);
-  },
-  beforeUnmount() {
-    console.log("login  - beforeUnmount");
-  },
-  unmounted() {
-    console.log("login  - unmounted");
   }
 });
 
@@ -153,35 +129,4 @@ export default defineComponent({
     }
   }
 }
-
-.login-tip {
-  font-size: 13px;
-  text-align: center;
-  color: #bfbfbf;
-}
-
-.login-code {
-  width: 33%;
-  height: 38px;
-  float: right;
-}
-
-.el-login-footer {
-  height: 40px;
-  line-height: 40px;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  text-align: center;
-  color: #fff;
-  font-family: Arial, serif;
-  font-size: 12px;
-  letter-spacing: 1px;
-}
-
-.login-code-img {
-  height: 38px;
-}
-
-
 </style>

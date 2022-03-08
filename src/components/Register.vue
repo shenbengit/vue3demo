@@ -167,34 +167,4 @@ export default defineComponent({
   }
 }
 
-.login-tip {
-  font-size: 13px;
-  text-align: center;
-  color: #bfbfbf;
-}
-
-.login-code {
-  width: 33%;
-  height: 38px;
-  float: right;
-}
-
-.el-login-footer {
-  height: 40px;
-  line-height: 40px;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  text-align: center;
-  color: #fff;
-  font-family: Arial, serif;
-  font-size: 12px;
-  letter-spacing: 1px;
-}
-
-.login-code-img {
-  height: 38px;
-}
-
-
 </style>

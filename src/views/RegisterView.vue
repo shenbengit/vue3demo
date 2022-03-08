@@ -24,6 +24,9 @@ export default defineComponent({
       loading: false
     };
   },
+  created() {
+    this.userType = this.$route.query.userType as string;
+  },
   methods: {
     handlerRegister(entity: UserRegisterEntity) {
       this.loading = true;
@@ -62,11 +65,8 @@ export default defineComponent({
         ElMessage.error("注册error：" + error);
       });
     }
-  },
-
-  created() {
-    this.userType = this.$route.query.userType as string;
   }
+
 });
 
 </script>

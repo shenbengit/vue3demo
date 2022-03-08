@@ -11,17 +11,20 @@ import {UserLoginBean} from "@/bean/api-bean";
 import {UserLoginEntity} from "@/bean/entity";
 import {ElMessage, ElLoading} from "element-plus";
 import {userLogin} from "@/api/user-api";
-import {RESULT_OK} from "@/constant/constant";
+import {RESULT_OK, USER_TYPE_CLIENT} from "@/constant/constant";
 
 export default defineComponent({
   name: "LoginView",
   data() {
     return {
-      userType: "0"
+      userType: ""
     };
   },
   components: {
     ClientLogin
+  },
+  created() {
+    this.userType = this.$route.query.userType as string;
   },
   methods: {
     showWarningMessage(msg: string) {
@@ -55,13 +58,18 @@ export default defineComponent({
       const login: UserLoginBean = {
         userId: data.userId,
         password: data.password,
-        userType: data.userType
+        userType: this.userType
       };
 
       userLogin(login).then(response => {
         loading.close();
         if (response.code === RESULT_OK) {
           this.showSuccessMessage("登录成功");
+          setTimeout(() => {
+            this.$router.push({
+              name: `${this.userType === USER_TYPE_CLIENT ? "clientHome" : "administratorHome"}`
+            });
+          }, 1500);
         } else {
           this.showWarningMessage("登录失败：" + response.msg);
         }
@@ -70,30 +78,6 @@ export default defineComponent({
         this.showErrorMessage("登录异常：" + error);
       });
     }
-  },
-  beforeCreate() {
-    console.log("login view - beforeCreate");
-  },
-  created() {
-    console.log("login view - created");
-  },
-  beforeMount() {
-    console.log("login view - beforeMount");
-  },
-  beforeUpdate() {
-    console.log("login view - beforeUpdate");
-  },
-  updated() {
-    console.log("login view - updated");
-  },
-  mounted() {
-    console.log("login view - mounted");
-  },
-  beforeUnmount() {
-    console.log("login view - beforeUnmount");
-  },
-  unmounted() {
-    console.log("login view - unmounted");
   }
 });
 </script>
