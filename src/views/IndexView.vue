@@ -1,35 +1,38 @@
 <template>
   <div class="index-view">
-    <el-button type="primary" round @click="toLogin(administrator)">管理员</el-button>
+    <el-button type="primary" round @click="toLogin(administratorType)">管理员</el-button>
     <el-button type="primary" round @click="toLogin(clientType)">客户端</el-button>
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import {ref, defineComponent, onMounted, onUnmounted, reactive} from "vue";
 import {USER_TYPE_CLIENT, USER_TYPE_ADMINISTRATOR} from "@/constant/constant";
-import {ElMessage} from "element-plus";
+import {useRouter} from "vue-router";
+import {showWarningMessage} from "@/util/ElMessageUtil";
 
 export default defineComponent({
   name: "IndexView",
-  data() {
-    return {
-      clientType: USER_TYPE_CLIENT,
-      administrator: USER_TYPE_ADMINISTRATOR
-    };
-  },
-  methods: {
-    toLogin(userType: string) {
+  setup() {
+    const router = useRouter();
+
+    const clientType = ref(USER_TYPE_CLIENT);
+    const administratorType = ref(USER_TYPE_ADMINISTRATOR);
+
+    //跳转到登录页
+    function toLogin(userType: string) {
       if (userType === USER_TYPE_ADMINISTRATOR) {
-        ElMessage.warning({
-          showClose: true,
-          message: "功能暂未开放！",
-          center: true
-        });
+        showWarningMessage("功能暂未开放！");
         return;
       }
-      this.$router.push({name: "login", query: {userType: userType}});
+      router.push({name: "login", query: {userType: userType}});
     }
+
+    return {
+      clientType,
+      administratorType,
+      toLogin
+    };
   }
 });
 </script>
@@ -56,4 +59,7 @@ export default defineComponent({
 
 }
 
+.el-button + .el-button {
+  margin-left: 0;
+}
 </style>

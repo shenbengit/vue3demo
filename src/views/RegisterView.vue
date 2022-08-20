@@ -5,68 +5,75 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import {defineComponent, ref} from "vue";
 import ClientRegister from "@/components/Register.vue";
 import {UserRegisterEntity} from "@/bean/entity";
 import {checkUserId, insertUser} from "@/api/user-api";
 import {CheckUserIdBean, UserRegisterBean} from "@/bean/api-bean";
 import {RESULT_OK} from "@/constant/constant";
-import {ElMessage} from "element-plus";
+import {useRoute, useRouter} from "vue-router";
+import {showErrorMessage, showSuccessMessage, showWarningMessage} from "@/util/ElMessageUtil";
 
 export default defineComponent({
   name: "RegisterView",
   components: {
     ClientRegister
   },
-  data() {
-    return {
-      userType: "",
-      loading: false
-    };
-  },
-  created() {
-    this.userType = this.$route.query.userType as string;
-  },
-  methods: {
-    handlerRegister(entity: UserRegisterEntity) {
-      this.loading = true;
+  setup() {
+    //当前的路由对象
+    const route = useRoute();
+    //路由实例
+    const router = useRouter();
+
+    const userType = ref(route.query.userType as string);
+    const loading = ref(false);
+
+    function handlerRegister(entity: UserRegisterEntity) {
+      loading.value = true;
       const checkUser: CheckUserIdBean = {
         userId: entity.userId, userType: entity.userType
       };
       checkUserId(checkUser).then(response => {
         if (response.code == RESULT_OK) {
-          this.registerUser(entity);
+          registerUser(entity);
         } else {
-          this.loading = false;
-          ElMessage.warning("用户id已被注册");
+          loading.value = false;
+         showWarningMessage("用户id已被注册");
         }
       }).catch(error => {
-        this.loading = false;
-        ElMessage.error("校验用户id是否可用error：" + error);
+        loading.value = false;
+        showErrorMessage("校验用户id是否可用error：" + error);
       });
-    },
-    registerUser(entity: UserRegisterEntity) {
+    }
+
+    function registerUser(entity: UserRegisterEntity) {
       const bean: UserRegisterBean = {
         password: entity.password, userId: entity.userId, userType: entity.userType, username: entity.username
       };
-
       insertUser(bean).then(response => {
-        this.loading = false;
+        loading.value = false;
         if (response.code == RESULT_OK) {
-          ElMessage.success("注册成功");
+          showSuccessMessage("注册成功");
           setTimeout(() => {
-            this.$router.push({name: "login", query: {userType: this.userType}});
+            // router.push({name: "login", query: {userType: userType.value}});
+            //回退
+            router.back();
           }, 1000);
         } else {
-          ElMessage.warning("注册失败：" + response.msg);
+          showWarningMessage("注册失败：" + response.msg);
         }
       }).catch(error => {
-        this.loading = false;
-        ElMessage.error("注册error：" + error);
+        loading.value = false;
+        showErrorMessage("注册error：" + error);
       });
     }
-  }
 
+    return {
+      userType,
+      loading,
+      handlerRegister
+    };
+  }
 });
 
 </script>

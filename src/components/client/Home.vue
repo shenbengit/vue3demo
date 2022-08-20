@@ -4,10 +4,15 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "ClientHome"
-};
+<script lang="ts">
+import {defineComponent} from "vue";
+
+export default defineComponent({
+  name: "ClientHome",
+  setup() {
+    console.log();
+  }
+});
 </script>
 
 <style scoped>

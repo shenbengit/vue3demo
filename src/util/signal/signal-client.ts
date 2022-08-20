@@ -8,13 +8,17 @@ export class SignalClient {
 
     private static _instance: SignalClient;
 
-    // private socket: Socket = null;
+    /**
+     * 在调用{@link connect}之后有值
+     * @private
+     */
+    private declare socket: Socket;
 
     private constructor() {
         //私有构造方法
     }
 
-    public static get instance(): SignalClient {
+    public static getInstance(): SignalClient {
         if (!SignalClient._instance) {
             SignalClient._instance = new SignalClient();
         }
@@ -25,9 +29,9 @@ export class SignalClient {
 
     public connect(userId: string) {
         const baseUrl = process.env.VUE_APP_BASE_SIGNAL_URL;
-        const socket = io(`${baseUrl}/srs_rtc/signal/client?userId=${userId}`);
+        this.socket = io(`${baseUrl}/srs_rtc/signal/client?userId=${userId}`);
         // client-side
-        socket.on("connect", () => {
+        this.socket.on("connect", () => {
             this.connectionStatusCallbackList.forEach(item => {
                 item.connected();
             });
@@ -40,7 +44,7 @@ export class SignalClient {
                 item.disconnected(reason);
             });
         });
-        socket.connect();
+        this.socket.connect();
     }
 
     public addConnectionStatusCallback(callback?: ConnectionStatusCallback) {

@@ -3,7 +3,6 @@
     <h3 class="title">{{ userType === clientType ? "Client" : "Administrator" }} Login</h3>
 
     <el-form
-        ref="loginForm"
         :model="loginForm"
         :rules="loginRules"
     >
@@ -49,10 +48,10 @@
 
 <script lang="ts">
 
-import {defineComponent} from "vue";
+import {defineComponent, reactive, ref, SetupContext, toRefs} from "vue";
 import {UserLoginEntity} from "@/bean/entity";
-import {ElMessage} from "element-plus";
 import {USER_TYPE_ADMINISTRATOR, USER_TYPE_CLIENT} from "@/constant/constant";
+import {showWarningMessage} from "@/util/ElMessageUtil";
 
 export default defineComponent({
   name: "UserLogin",
@@ -65,43 +64,41 @@ export default defineComponent({
       required: true
     }
   },
-  data() {
-    return {
-      clientType: USER_TYPE_CLIENT,
-      administrator: USER_TYPE_ADMINISTRATOR,
-      loginForm: new UserLoginEntity(),
-      loginRules: {
-        userId: [
-          {required: true, trigger: "blur", message: "请输入您的用户ID"}
-        ],
-        password: [
-          {required: true, trigger: "blur", message: "请输入您的密码"}
-        ]
-      }
-    };
-  },
-  methods: {
-    showWarningMessage(msg: string) {
-      ElMessage({
-        showClose: true,
-        message: msg,
-        type: "warning",
-        center: true
-      });
-    },
-    handleLogin() {
-      if (this.loginForm.userId === "") {
-        this.showWarningMessage("请输入您的用户ID");
+  setup(props, {emit}: SetupContext) {
+    const clientType = ref(USER_TYPE_CLIENT);
+    const administratorType = ref(USER_TYPE_ADMINISTRATOR);
+    const loginForm = reactive(new UserLoginEntity());
+    const loginRules = reactive({
+      userId: [
+        {required: true, trigger: "blur", message: "请输入您的用户ID"}
+      ],
+      password: [
+        {required: true, trigger: "blur", message: "请输入您的密码"}
+      ]
+    });
+
+    //处理登录事件
+    function handleLogin() {
+      if (loginForm.userId === "") {
+        showWarningMessage("请输入您的用户ID");
         return;
       }
-      if (this.loginForm.password === "") {
-        this.showWarningMessage("请输入您的密码");
+      if (loginForm.password === "") {
+        showWarningMessage("请输入您的密码");
         return;
       }
-      this.loginForm.userType = this.userType;
+      loginForm.userType = props.userType;
       //与父组件通信
-      this.$emit("handleLogin", this.loginForm);
+      emit("handleLogin", loginForm);
     }
+
+    return {
+      clientType,
+      administratorType,
+      loginForm,
+      loginRules,
+      handleLogin
+    };
   }
 });
 

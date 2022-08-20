@@ -5,50 +5,31 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import {defineComponent, ref} from "vue";
 import ClientLogin from "@/components/Login.vue";
 import {UserLoginBean} from "@/bean/api-bean";
 import {UserLoginEntity} from "@/bean/entity";
-import {ElMessage, ElLoading} from "element-plus";
+import {ElLoading} from "element-plus";
 import {userLogin} from "@/api/user-api";
 import {RESULT_OK, USER_TYPE_CLIENT} from "@/constant/constant";
+import {showErrorMessage, showSuccessMessage, showWarningMessage} from "@/util/ElMessageUtil";
+import {useRoute, useRouter} from "vue-router";
 
 export default defineComponent({
   name: "LoginView",
-  data() {
-    return {
-      userType: ""
-    };
-  },
   components: {
     ClientLogin
   },
-  created() {
-    this.userType = this.$route.query.userType as string;
-  },
-  methods: {
-    showWarningMessage(msg: string) {
-      ElMessage.warning({
-        showClose: true,
-        message: msg,
-        center: true
-      });
-    },
-    showErrorMessage(msg: string) {
-      ElMessage.error({
-        showClose: true,
-        message: msg,
-        center: true
-      });
-    },
-    showSuccessMessage(msg: string) {
-      ElMessage.success({
-        showClose: true,
-        message: msg,
-        center: true
-      });
-    },
-    handleLogin(data: UserLoginEntity) {
+  setup() {
+    //当前的路由对象
+    const route = useRoute();
+    //路由实例
+    const router = useRouter();
+
+    const userType = ref(route.query.userType as string);
+
+    //登录，子组件回调
+    function handleLogin(data: UserLoginEntity) {
       const loading = ElLoading.service({
         lock: true,
         text: "Loading",
@@ -58,27 +39,34 @@ export default defineComponent({
       const login: UserLoginBean = {
         userId: data.userId,
         password: data.password,
-        userType: this.userType
+        userType: userType.value
       };
 
       userLogin(login).then(response => {
         loading.close();
         if (response.code === RESULT_OK) {
-          this.showSuccessMessage("登录成功");
+          showSuccessMessage("登录成功");
+          //延迟跳转
           setTimeout(() => {
-            this.$router.push({
-              name: `${this.userType === USER_TYPE_CLIENT ? "clientHome" : "administratorHome"}`
+            router.push({
+              name: `${userType.value === USER_TYPE_CLIENT ? "clientHome" : "administratorHome"}`,
+              query: {userId: response.data.userId}
             });
           }, 1500);
         } else {
-          this.showWarningMessage("登录失败：" + response.msg);
+          showWarningMessage("登录失败：" + response.msg);
         }
       }).catch(error => {
         loading.close();
-        this.showErrorMessage("登录异常：" + error);
+        showErrorMessage("登录异常：" + error);
       });
     }
-  }
+
+    return {
+      userType,
+      handleLogin
+    };
+  },
 });
 </script>
 

@@ -3,7 +3,6 @@
     <h3 class="title">{{ userType === clientType ? "Client" : "Administrator" }} Register</h3>
 
     <el-form
-        ref="registerForm"
         :model="registerForm"
         :rules="registerRules"
     >
@@ -62,10 +61,10 @@
 
 <script lang="ts">
 
-import {defineComponent} from "vue";
+import {defineComponent, reactive, ref, SetupContext} from "vue";
 import {UserRegisterEntity} from "@/bean/entity";
-import {ElMessage} from "element-plus";
 import {USER_TYPE_ADMINISTRATOR, USER_TYPE_CLIENT} from "@/constant/constant";
+import {showWarningMessage} from "@/util/ElMessageUtil";
 
 export default defineComponent({
   name: "UserRegister",
@@ -82,63 +81,61 @@ export default defineComponent({
       required: true,
       default: false
     }
+  },
+  setup(props, {emit}: SetupContext) {
+    const clientType = ref(USER_TYPE_CLIENT);
+    const administratorType = ref(USER_TYPE_ADMINISTRATOR);
+    //注册信息
+    const registerForm = reactive(new UserRegisterEntity());
+    const registerRules = reactive({
+      userId: [
+        {required: true, trigger: "blur", message: "请输入您的用户ID"}
+      ],
+      username: [
+        {required: true, trigger: "blur", message: "请输入您的用户名"}
+      ],
+      password: [
+        {required: true, trigger: "blur", message: "请输入您的密码"}
+      ],
+      passwordAgain: [
+        {required: true, trigger: "blur", message: "请再次输入您的密码"}
+      ]
+    });
 
-  },
-  data() {
-    return {
-      clientType: USER_TYPE_CLIENT,
-      administrator: USER_TYPE_ADMINISTRATOR,
-      registerForm: new UserRegisterEntity(),
-      registerRules: {
-        userId: [
-          {required: true, trigger: "blur", message: "请输入您的用户ID"}
-        ],
-        username: [
-          {required: true, trigger: "blur", message: "请输入您的用户名"}
-        ],
-        password: [
-          {required: true, trigger: "blur", message: "请输入您的密码"}
-        ],
-        passwordAgain: [
-          {required: true, trigger: "blur", message: "请再次输入您的密码"}
-        ]
-      }
-    };
-  },
-  methods: {
-    showWarningMessage(msg: string) {
-      ElMessage({
-        showClose: true,
-        message: msg,
-        type: "warning",
-        center: true
-      });
-    },
-    handleLogin() {
-      if (this.registerForm.userId === "") {
-        this.showWarningMessage("请输入您的用户ID");
+    //登录
+    function handleLogin() {
+      if (registerForm.userId === "") {
+        showWarningMessage("请输入您的用户ID");
         return;
       }
-      if (this.registerForm.username === "") {
-        this.showWarningMessage("请输入您的用户名");
+      if (registerForm.username === "") {
+        showWarningMessage("请输入您的用户名");
         return;
       }
-      if (this.registerForm.password === "") {
-        this.showWarningMessage("请输入您的密码");
+      if (registerForm.password === "") {
+        showWarningMessage("请输入您的密码");
         return;
       }
-      if (this.registerForm.passwordAgain === "") {
-        this.showWarningMessage("请再次输入您的密码");
+      if (registerForm.passwordAgain === "") {
+        showWarningMessage("请再次输入您的密码");
         return;
       }
-      if (this.registerForm.password !== this.registerForm.passwordAgain) {
-        this.showWarningMessage("两次密码输入不一致");
+      if (registerForm.password !== registerForm.passwordAgain) {
+        showWarningMessage("两次密码输入不一致");
         return;
       }
-      this.registerForm.userType = this.userType;
+      registerForm.userType = props.userType;
       //与父组件通信
-      this.$emit("handleRegister", this.registerForm);
+      emit("handleRegister", registerForm);
     }
+
+    return {
+      clientType,
+      administratorType,
+      registerForm,
+      registerRules,
+      handleLogin
+    };
   }
 });
 
