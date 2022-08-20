@@ -35,7 +35,7 @@ export function insertUser(bean: UserRegisterBean): Promise<ApiResponse> {
  * @param userType
  */
 export function getUserInfo(userId: string, userType: string): Promise<ApiResponse<UserInfoBean>> {
-    return httpGet<ApiResponse<UserInfoBean>>("/srs_rtc/user/insertUser", {
+    return httpGet<ApiResponse<UserInfoBean>>("/srs_rtc/user/getUserInfo", {
         params: {
             userId: userId,
             userType: userType

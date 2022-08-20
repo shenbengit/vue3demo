@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="basic-view">
 
   </div>
 </template>
@@ -8,7 +8,10 @@
 import {defineComponent} from "vue";
 
 export default defineComponent({
-  name: "AdministratorHomeView"
+  name: "AdministratorHomeView",
+  setup() {
+    console.log("AdministratorHomeView setup");
+  }
 });
 </script>
 

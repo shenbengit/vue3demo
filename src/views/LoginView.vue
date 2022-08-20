@@ -1,12 +1,12 @@
 <template>
-  <div class="login-view">
-    <client-login :user-type="userType" v-on:handle-login="handleLogin"></client-login>
+  <div class="basic-view">
+    <user-login :user-type="userType" v-on:handle-login="handleLogin"></user-login>
   </div>
 </template>
 
 <script lang="ts">
 import {defineComponent, ref} from "vue";
-import ClientLogin from "@/components/Login.vue";
+import UserLogin from "@/components/Login.vue";
 import {UserLoginBean} from "@/bean/api-bean";
 import {UserLoginEntity} from "@/bean/entity";
 import {ElLoading} from "element-plus";
@@ -18,7 +18,7 @@ import {useRoute, useRouter} from "vue-router";
 export default defineComponent({
   name: "LoginView",
   components: {
-    ClientLogin
+    UserLogin
   },
   setup() {
     //当前的路由对象
@@ -48,12 +48,14 @@ export default defineComponent({
           showSuccessMessage("登录成功");
           //延迟跳转
           setTimeout(() => {
+            const infoBean = response.data;
             router.push({
               name: `${userType.value === USER_TYPE_CLIENT ? "clientHome" : "administratorHome"}`,
-              query: {userId: response.data.userId}
+              query: {userId: infoBean.userId, userType: infoBean.userType}
             });
           }, 1500);
         } else {
+          console.log("登录失败，" + response);
           showWarningMessage("登录失败：" + response.msg);
         }
       }).catch(error => {
@@ -69,14 +71,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped lang="scss">
-
-.login-view {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  background: -webkit-gradient(linear, 180 0, 0 50%, from(#3e9bfa), to(#21bd96));
-}
-</style>

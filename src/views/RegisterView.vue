@@ -1,5 +1,5 @@
 <template>
-  <div class="register-view">
+  <div class="basic-view">
     <client-register :user-type="userType" v-on:handle-register="handlerRegister" :loading="loading"></client-register>
   </div>
 </template>
@@ -60,6 +60,7 @@ export default defineComponent({
             router.back();
           }, 1000);
         } else {
+          console.log("注册失败，" + response);
           showWarningMessage("注册失败：" + response.msg);
         }
       }).catch(error => {
@@ -77,14 +78,3 @@ export default defineComponent({
 });
 
 </script>
-
-<style scoped lang="scss">
-
-.register-view {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  background: -webkit-gradient(linear, 180 0, 0 50%, from(#3e9bfa), to(#21bd96));
-}
-</style>

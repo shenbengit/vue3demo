@@ -4,4 +4,12 @@ body,
   height: 100%;
   margin: 0;
   padding: 0;
+  background: -webkit-gradient(linear, 180 0, 0 50%, from(#3e9bfa), to(#21bd96));
+
+  .basic-view {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
 }

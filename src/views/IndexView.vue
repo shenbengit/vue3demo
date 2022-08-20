@@ -1,5 +1,5 @@
 <template>
-  <div class="index-view">
+  <div class="basic-view index-view">
     <el-button type="primary" round @click="toLogin(administratorType)">管理员</el-button>
     <el-button type="primary" round @click="toLogin(clientType)">客户端</el-button>
   </div>
@@ -39,11 +39,6 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .index-view {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  background: -webkit-gradient(linear, 180 0, 0 50%, from(#3e9bfa), to(#21bd96));
   flex-direction: column;
 
   .el-button {
