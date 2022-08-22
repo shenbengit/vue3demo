@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref} from "vue";
+import {defineComponent} from "vue";
 import ClientRegister from "@/components/Register.vue";
 import {UserRegisterEntity} from "@/bean/entity";
 import {checkUserId, insertUser} from "@/api/user-api";
@@ -13,6 +13,7 @@ import {CheckUserIdBean, UserRegisterBean} from "@/bean/api-bean";
 import {RESULT_OK} from "@/constant/constant";
 import {useRoute, useRouter} from "vue-router";
 import {showErrorMessage, showSuccessMessage, showWarningMessage} from "@/util/ElMessageUtil";
+import {$ref} from 'vue/macros';
 
 export default defineComponent({
   name: "RegisterView",
@@ -25,11 +26,11 @@ export default defineComponent({
     //路由实例
     const router = useRouter();
 
-    const userType = ref(route.query.userType as string);
-    const loading = ref(false);
+    const userType = $ref(route.query.userType as string);
+    let loading = $ref(false);
 
-    function handlerRegister(entity: UserRegisterEntity) {
-      loading.value = true;
+    const handlerRegister = (entity: UserRegisterEntity) => {
+      loading = true;
       const checkUser: CheckUserIdBean = {
         userId: entity.userId, userType: entity.userType
       };
@@ -37,21 +38,21 @@ export default defineComponent({
         if (response.code == RESULT_OK) {
           registerUser(entity);
         } else {
-          loading.value = false;
-         showWarningMessage("用户id已被注册");
+          loading = false;
+          showWarningMessage("用户id已被注册");
         }
       }).catch(error => {
-        loading.value = false;
+        loading = false;
         showErrorMessage("校验用户id是否可用error：" + error);
       });
-    }
+    };
 
-    function registerUser(entity: UserRegisterEntity) {
+    const registerUser = (entity: UserRegisterEntity) => {
       const bean: UserRegisterBean = {
         password: entity.password, userId: entity.userId, userType: entity.userType, username: entity.username
       };
       insertUser(bean).then(response => {
-        loading.value = false;
+        loading = false;
         if (response.code == RESULT_OK) {
           showSuccessMessage("注册成功");
           setTimeout(() => {
@@ -64,10 +65,10 @@ export default defineComponent({
           showWarningMessage("注册失败：" + response.msg);
         }
       }).catch(error => {
-        loading.value = false;
+        loading = false;
         showErrorMessage("注册error：" + error);
       });
-    }
+    };
 
     return {
       userType,

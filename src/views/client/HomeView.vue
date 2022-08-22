@@ -1,7 +1,18 @@
 <template>
   <div class="basic-view">
-    <client-home :user-type="userType" :user-id="userId" :user-name="username"
-                 :connection-status="socketIoConnectionStatus"></client-home>
+    <client-home :user-type="userType"
+                 :user-id="userId"
+                 :user-name="username"
+                 :connection-status="socketIoConnectionStatus"
+                 v-on:private-chat="onPrivateChat"
+                 v-on:group-chat="onGroupChat"
+                 v-on:chat-room="onChatRoom">
+
+    </client-home>
+
+    <el-dialog v-model="showCheckUserDialog" destroy-on-close>
+
+    </el-dialog>
 
   </div>
 </template>
@@ -16,6 +27,7 @@ import {SignalClient} from "@/util/signal/signal-client";
 import {getUserInfo} from "@/api/user-api";
 import {ElLoading} from "element-plus";
 import {RESULT_OK} from "@/constant/constant";
+import { $ref } from 'vue/macros'
 
 export default defineComponent({
   name: "ClientHomeView",
@@ -29,6 +41,13 @@ export default defineComponent({
     //路由实例
     const router = useRouter();
 
+    //显示选择用户列表弹出框
+    let showCheckUserDialog = $ref(false);
+    //是否是多选用户
+    let isMultipleCheckUser = $ref(false);
+    //显示输入房间号弹出框
+    let showEnterChatRoomDialog = $ref(false);
+
     //userId
     const userId = route.query.userId as string;
     //userId
@@ -41,9 +60,8 @@ export default defineComponent({
       username: "--",
       userType: "--",
     });
-
     //获取用户信息
-    function getUser() {
+    const getUser = () => {
       const loading = ElLoading.service({
         lock: true,
         text: "Loading",
@@ -67,9 +85,7 @@ export default defineComponent({
             console.log("获取个人信息异常：", error);
             loading.close();
           });
-    }
-
-    getUser();
+    };
 
     const signalClient = SignalClient.getInstance();
 
@@ -89,18 +105,41 @@ export default defineComponent({
     } as ConnectionStatusCallback);
 
     onMounted(() => {
+      //添加回调
       signalClient.addConnectionStatusCallback(connectionStatusCallback);
+      //网络请求
+      getUser();
+      //连接信令服务
+      signalClient.connect(userId);
     });
+
     onUnmounted(() => {
+      //移除回调
       signalClient.removeConnectionStatusCallback(connectionStatusCallback);
     });
 
-    //连接信令服务
-    signalClient.connect(userId);
+    const onPrivateChat = () => {
+      showCheckUserDialog = true;
+      isMultipleCheckUser = false;
 
+    };
+    const onGroupChat = () => {
+      showCheckUserDialog = true;
+      isMultipleCheckUser = true;
+
+    };
+    const onChatRoom = () => {
+      console.log("chatRoom");
+    };
     return {
+      showCheckUserDialog,
+      isMultipleCheckUser,
+      showEnterChatRoomDialog,
       socketIoConnectionStatus,
-      ...toRefs(userInfo)
+      ...toRefs(userInfo),
+      onPrivateChat,
+      onGroupChat,
+      onChatRoom
     };
   }
 });

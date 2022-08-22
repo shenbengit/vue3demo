@@ -78,7 +78,7 @@ export default defineComponent({
     });
 
     //处理登录事件
-    function handleLogin() {
+    const handleLogin = () => {
       if (loginForm.userId === "") {
         showWarningMessage("请输入您的用户ID");
         return;
@@ -90,7 +90,7 @@ export default defineComponent({
       loginForm.userType = props.userType;
       //与父组件通信
       emit("handleLogin", loginForm);
-    }
+    };
 
     return {
       clientType,

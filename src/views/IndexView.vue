@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts">
-import {ref, defineComponent, onMounted, onUnmounted, reactive} from "vue";
+import {ref, defineComponent} from "vue";
 import {USER_TYPE_CLIENT, USER_TYPE_ADMINISTRATOR} from "@/constant/constant";
 import {useRouter} from "vue-router";
 import {showWarningMessage} from "@/util/ElMessageUtil";
@@ -52,9 +52,5 @@ export default defineComponent({
     margin-left: 0 !important;
   }
 
-}
-
-.el-button + .el-button {
-  margin-left: 0;
 }
 </style>

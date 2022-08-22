@@ -29,7 +29,7 @@ export default defineComponent({
     const userType = ref(route.query.userType as string);
 
     //登录，子组件回调
-    function handleLogin(data: UserLoginEntity) {
+    const handleLogin = (data: UserLoginEntity) => {
       const loading = ElLoading.service({
         lock: true,
         text: "Loading",
@@ -62,7 +62,7 @@ export default defineComponent({
         loading.close();
         showErrorMessage("登录异常：" + error);
       });
-    }
+    };
 
     return {
       userType,

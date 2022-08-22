@@ -103,7 +103,7 @@ export default defineComponent({
     });
 
     //登录
-    function handleLogin() {
+    const handleLogin = () => {
       if (registerForm.userId === "") {
         showWarningMessage("请输入您的用户ID");
         return;
@@ -127,7 +127,7 @@ export default defineComponent({
       registerForm.userType = props.userType;
       //与父组件通信
       emit("handleRegister", registerForm);
-    }
+    };
 
     return {
       clientType,
