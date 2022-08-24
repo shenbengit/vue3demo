@@ -1,6 +1,6 @@
 <template>
   <div class="basic-view">
-    <UserLogin :user-type="userType" v-on:handle-login="handleLogin" ref="childRef"></UserLogin>
+    <UserLogin :user-type="userType" @handle-login="handleLogin" ref="childRef"></UserLogin>
   </div>
 </template>
 

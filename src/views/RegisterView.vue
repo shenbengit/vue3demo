@@ -1,6 +1,6 @@
 <template>
   <div class="basic-view">
-    <client-register :user-type="userType" v-on:handle-register="handlerRegister" :loading="loading"
+    <client-register :user-type="userType" @handle-register="handlerRegister" :loading="loading"
                      ref="childRef"></client-register>
   </div>
 </template>

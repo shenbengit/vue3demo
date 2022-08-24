@@ -4,9 +4,9 @@
                  :user-id="userInfo.userId"
                  :user-name="userInfo.username"
                  :connection-status="socketIoConnectionStatus"
-                 v-on:private-chat="onPrivateChat"
-                 v-on:group-chat="onGroupChat"
-                 v-on:chat-room="onChatRoom">
+                 @private-chat="onPrivateChat"
+                 @group-chat="onGroupChat"
+                 @chat-room="onChatRoom">
 
     </client-home>
 
