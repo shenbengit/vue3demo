@@ -59,84 +59,82 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 
-import {defineComponent, reactive, ref, SetupContext} from "vue";
+import {reactive, ref} from "vue";
 import {UserRegisterEntity} from "@/bean/entity";
-import {USER_TYPE_ADMINISTRATOR, USER_TYPE_CLIENT} from "@/constant/constant";
+import {USER_TYPE_CLIENT} from "@/constant/constant";
 import {showWarningMessage} from "@/util/ElMessageUtil";
 
-export default defineComponent({
-  name: "UserRegister",
-  props: {
-    /**
-     * 用户类型
-     */
-    userType: {
-      type: String,
-      required: true
-    },
-    loading: {
-      type: Boolean,
-      required: true,
-      default: false
-    }
+const props = defineProps({
+  /**
+   * 用户类型
+   */
+  userType: {
+    type: String,
+    required: true
   },
-  setup(props, {emit}: SetupContext) {
-    const clientType = ref(USER_TYPE_CLIENT);
-    const administratorType = ref(USER_TYPE_ADMINISTRATOR);
-    //注册信息
-    const registerForm = reactive(new UserRegisterEntity());
-    const registerRules = reactive({
-      userId: [
-        {required: true, trigger: "blur", message: "请输入您的用户ID"}
-      ],
-      username: [
-        {required: true, trigger: "blur", message: "请输入您的用户名"}
-      ],
-      password: [
-        {required: true, trigger: "blur", message: "请输入您的密码"}
-      ],
-      passwordAgain: [
-        {required: true, trigger: "blur", message: "请再次输入您的密码"}
-      ]
-    });
-
-    //登录
-    const handleLogin = () => {
-      if (registerForm.userId === "") {
-        showWarningMessage("请输入您的用户ID");
-        return;
-      }
-      if (registerForm.username === "") {
-        showWarningMessage("请输入您的用户名");
-        return;
-      }
-      if (registerForm.password === "") {
-        showWarningMessage("请输入您的密码");
-        return;
-      }
-      if (registerForm.passwordAgain === "") {
-        showWarningMessage("请再次输入您的密码");
-        return;
-      }
-      if (registerForm.password !== registerForm.passwordAgain) {
-        showWarningMessage("两次密码输入不一致");
-        return;
-      }
-      registerForm.userType = props.userType;
-      //与父组件通信
-      emit("handleRegister", registerForm);
-    };
-
-    return {
-      clientType,
-      administratorType,
-      registerForm,
-      registerRules,
-      handleLogin
-    };
+  loading: {
+    type: Boolean,
+    required: true,
+    default: false
   }
+});
+
+//和父组件通信
+const emit = defineEmits<{ (e: 'handleRegister'): void }>();
+
+const clientType = ref(USER_TYPE_CLIENT);
+//注册信息
+const registerForm = reactive({
+  userId: "",
+  username: "",
+  password: "",
+  passwordAgain: "",
+});
+const registerRules = reactive({
+  userId: [
+    {required: true, trigger: "blur", message: "请输入您的用户ID"}
+  ],
+  username: [
+    {required: true, trigger: "blur", message: "请输入您的用户名"}
+  ],
+  password: [
+    {required: true, trigger: "blur", message: "请输入您的密码"}
+  ],
+  passwordAgain: [
+    {required: true, trigger: "blur", message: "请再次输入您的密码"}
+  ]
+});
+
+//登录
+const handleLogin = () => {
+  if (registerForm.userId === "") {
+    showWarningMessage("请输入您的用户ID");
+    return;
+  }
+  if (registerForm.username === "") {
+    showWarningMessage("请输入您的用户名");
+    return;
+  }
+  if (registerForm.password === "") {
+    showWarningMessage("请输入您的密码");
+    return;
+  }
+  if (registerForm.passwordAgain === "") {
+    showWarningMessage("请再次输入您的密码");
+    return;
+  }
+  if (registerForm.password !== registerForm.passwordAgain) {
+    showWarningMessage("两次密码输入不一致");
+    return;
+  }
+  //与父组件通信
+  emit("handleRegister");
+};
+
+defineExpose({
+  registerForm
 });
 
 </script>

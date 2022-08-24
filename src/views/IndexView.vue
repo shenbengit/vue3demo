@@ -5,36 +5,25 @@
   </div>
 </template>
 
-<script lang="ts">
-import {ref, defineComponent} from "vue";
+<script lang="ts" setup>
+import {ref} from "vue";
 import {USER_TYPE_CLIENT, USER_TYPE_ADMINISTRATOR} from "@/constant/constant";
 import {useRouter} from "vue-router";
 import {showWarningMessage} from "@/util/ElMessageUtil";
 
-export default defineComponent({
-  name: "IndexView",
-  setup() {
-    const router = useRouter();
+const router = useRouter();
 
-    const clientType = ref(USER_TYPE_CLIENT);
-    const administratorType = ref(USER_TYPE_ADMINISTRATOR);
+const clientType = ref(USER_TYPE_CLIENT);
+const administratorType = ref(USER_TYPE_ADMINISTRATOR);
 
-    //跳转到登录页
-    function toLogin(userType: string) {
-      if (userType === USER_TYPE_ADMINISTRATOR) {
-        showWarningMessage("功能暂未开放！");
-        return;
-      }
-      router.push({name: "login", query: {userType: userType}});
-    }
-
-    return {
-      clientType,
-      administratorType,
-      toLogin
-    };
+//跳转到登录页
+function toLogin(userType: string) {
+  if (userType === USER_TYPE_ADMINISTRATOR) {
+    showWarningMessage("功能暂未开放！");
+    return;
   }
-});
+  router.push({name: "login", query: {userType: userType}});
+}
 </script>
 
 <style scoped lang="scss">

@@ -3,8 +3,7 @@
  */
 import {io, Socket} from "socket.io-client";
 import {ConnectionStatusCallback} from "@/util/signal/connection-status-callback";
-import {ref} from "vue";
-import {Ref} from "@vue/reactivity";
+import {Ref, ref} from "vue";
 
 /**
  * socket.io 连接状态

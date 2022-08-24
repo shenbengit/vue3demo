@@ -1,8 +1,8 @@
 <template>
   <div class="basic-view">
-    <client-home :user-type="userType"
-                 :user-id="userId"
-                 :user-name="username"
+    <client-home :user-type="userInfo.userType"
+                 :user-id="userInfo.userId"
+                 :user-name="userInfo.username"
                  :connection-status="socketIoConnectionStatus"
                  v-on:private-chat="onPrivateChat"
                  v-on:group-chat="onGroupChat"
@@ -17,9 +17,9 @@
   </div>
 </template>
 
-<script lang="ts">
-import {defineComponent, onMounted, onUnmounted, reactive, ref, toRefs} from "vue";
-import ClientHome from "@/components/client/Home.vue";
+<script lang="ts" setup>
+import {onMounted, onUnmounted, reactive, ref} from "vue";
+import ClientHome from "@/components/client/clientHome.vue";
 import {useRoute, useRouter} from "vue-router";
 import {Socket} from "socket.io-client";
 import {ConnectionStatusCallback} from "@/util/signal/connection-status-callback";
@@ -27,122 +27,102 @@ import {SignalClient} from "@/util/signal/signal-client";
 import {getUserInfo} from "@/api/user-api";
 import {ElLoading} from "element-plus";
 import {RESULT_OK} from "@/constant/constant";
-import { $ref } from 'vue/macros'
 
-export default defineComponent({
-  name: "ClientHomeView",
-  components: {
-    ClientHome
-  },
+//当前的路由对象
+const route = useRoute();
+//路由实例
+const router = useRouter();
 
-  setup() {
-    //当前的路由对象
-    const route = useRoute();
-    //路由实例
-    const router = useRouter();
+//显示选择用户列表弹出框
+const showCheckUserDialog = ref(false);
+//是否是多选用户
+const isMultipleCheckUser = ref(false);
+//显示输入房间号弹出框
+const showEnterChatRoomDialog = ref(false);
 
-    //显示选择用户列表弹出框
-    let showCheckUserDialog = $ref(false);
-    //是否是多选用户
-    let isMultipleCheckUser = $ref(false);
-    //显示输入房间号弹出框
-    let showEnterChatRoomDialog = $ref(false);
+//userId
+const userId = route.query.userId as string;
+//userId
+const userType = route.query.userType as string;
 
-    //userId
-    const userId = route.query.userId as string;
-    //userId
-    const userType = route.query.userType as string;
-
-    //用户信息
-    const userInfo = reactive({
-      createdAt: "--",
-      userId: "--",
-      username: "--",
-      userType: "--",
-    });
-    //获取用户信息
-    const getUser = () => {
-      const loading = ElLoading.service({
-        lock: true,
-        text: "Loading",
-        background: "rgba(0, 0, 0, 0.7)"
-      });
-      getUserInfo(userId, userType)
-          .then(response => {
-            loading.close();
-            if (response.code == RESULT_OK) {
-              const infoBean = response.data;
-
-              userInfo.createdAt = infoBean.createdAt;
-              userInfo.userId = infoBean.userId;
-              userInfo.userType = infoBean.userType;
-              userInfo.username = infoBean.username;
-            } else {
-              console.log("获取个人信息失败：", response);
-            }
-          })
-          .catch(error => {
-            console.log("获取个人信息异常：", error);
-            loading.close();
-          });
-    };
-
-    const signalClient = SignalClient.getInstance();
-
-    const socketIoConnectionStatus = signalClient.getConnectionStatus();
-
-    const connectionStatusCallback = reactive({
-      connected() {
-        console.log("SignalClient connected");
-
-      },
-      connectError(err: Error) {
-        console.log("SignalClient connectError", err);
-      },
-      disconnected(reason: Socket.DisconnectReason) {
-        console.log("SignalClient disconnected", reason);
-      }
-    } as ConnectionStatusCallback);
-
-    onMounted(() => {
-      //添加回调
-      signalClient.addConnectionStatusCallback(connectionStatusCallback);
-      //网络请求
-      getUser();
-      //连接信令服务
-      signalClient.connect(userId);
-    });
-
-    onUnmounted(() => {
-      //移除回调
-      signalClient.removeConnectionStatusCallback(connectionStatusCallback);
-    });
-
-    const onPrivateChat = () => {
-      showCheckUserDialog = true;
-      isMultipleCheckUser = false;
-
-    };
-    const onGroupChat = () => {
-      showCheckUserDialog = true;
-      isMultipleCheckUser = true;
-
-    };
-    const onChatRoom = () => {
-      console.log("chatRoom");
-    };
-    return {
-      showCheckUserDialog,
-      isMultipleCheckUser,
-      showEnterChatRoomDialog,
-      socketIoConnectionStatus,
-      ...toRefs(userInfo),
-      onPrivateChat,
-      onGroupChat,
-      onChatRoom
-    };
-  }
+//用户信息
+const userInfo = reactive({
+  createdAt: "--",
+  userId: "--",
+  username: "--",
+  userType: "--",
 });
+//获取用户信息
+const getUser = () => {
+  const loading = ElLoading.service({
+    lock: true,
+    text: "Loading",
+    background: "rgba(0, 0, 0, 0.7)"
+  });
+  getUserInfo(userId, userType)
+      .then(response => {
+        loading.close();
+        if (response.code == RESULT_OK) {
+          const infoBean = response.data;
+
+          userInfo.createdAt = infoBean.createdAt;
+          userInfo.userId = infoBean.userId;
+          userInfo.userType = infoBean.userType;
+          userInfo.username = infoBean.username;
+        } else {
+          console.log("获取个人信息失败：", response);
+        }
+      })
+      .catch(error => {
+        console.log("获取个人信息异常：", error);
+        loading.close();
+      });
+};
+
+const signalClient = SignalClient.getInstance();
+
+const socketIoConnectionStatus = signalClient.getConnectionStatus();
+
+const connectionStatusCallback = reactive({
+  connected() {
+    console.log("SignalClient connected");
+
+  },
+  connectError(err: Error) {
+    console.log("SignalClient connectError", err);
+  },
+  disconnected(reason: Socket.DisconnectReason) {
+    console.log("SignalClient disconnected", reason);
+  }
+} as ConnectionStatusCallback);
+
+onMounted(() => {
+  //添加回调
+  signalClient.addConnectionStatusCallback(connectionStatusCallback);
+  //网络请求
+  getUser();
+  //连接信令服务
+  signalClient.connect(userId);
+});
+
+onUnmounted(() => {
+  //移除回调
+  signalClient.removeConnectionStatusCallback(connectionStatusCallback);
+});
+
+const onPrivateChat = () => {
+  showCheckUserDialog.value = true;
+  isMultipleCheckUser.value = false;
+
+};
+const onGroupChat = () => {
+  showCheckUserDialog.value = true;
+  isMultipleCheckUser.value = true;
+
+};
+const onChatRoom = () => {
+  console.log("chatRoom");
+};
 </script>
 
 <style scoped lang="scss">

@@ -46,60 +46,50 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 
-import {defineComponent, reactive, ref, SetupContext, toRefs} from "vue";
-import {UserLoginEntity} from "@/bean/entity";
-import {USER_TYPE_ADMINISTRATOR, USER_TYPE_CLIENT} from "@/constant/constant";
-import {showWarningMessage} from "@/util/ElMessageUtil";
+import {reactive, ref} from "vue";
+import {USER_TYPE_CLIENT} from "@/constant/constant";
 
-export default defineComponent({
-  name: "UserLogin",
-  props: {
-    /**
-     * 用户类型
-     */
-    userType: {
-      type: String,
-      required: true
-    }
-  },
-  setup(props, {emit}: SetupContext) {
-    const clientType = ref(USER_TYPE_CLIENT);
-    const administratorType = ref(USER_TYPE_ADMINISTRATOR);
-    const loginForm = reactive(new UserLoginEntity());
-    const loginRules = reactive({
-      userId: [
-        {required: true, trigger: "blur", message: "请输入您的用户ID"}
-      ],
-      password: [
-        {required: true, trigger: "blur", message: "请输入您的密码"}
-      ]
-    });
-
-    //处理登录事件
-    const handleLogin = () => {
-      if (loginForm.userId === "") {
-        showWarningMessage("请输入您的用户ID");
-        return;
-      }
-      if (loginForm.password === "") {
-        showWarningMessage("请输入您的密码");
-        return;
-      }
-      loginForm.userType = props.userType;
-      //与父组件通信
-      emit("handleLogin", loginForm);
-    };
-
-    return {
-      clientType,
-      administratorType,
-      loginForm,
-      loginRules,
-      handleLogin
-    };
+defineProps({
+  /**
+   * 用户类型
+   */
+  userType: {
+    type: String,
+    required: true
   }
+});
+
+//和父组件通信
+const emit = defineEmits<{
+  (e: 'handleLogin'): void
+}>();
+
+const clientType = ref(USER_TYPE_CLIENT);
+//登录信息
+const loginForm = reactive({
+  userId: "",
+  password: ""
+});
+
+const loginRules = reactive({
+  userId: [
+    {required: true, trigger: "blur", message: "请输入您的用户ID"}
+  ],
+  password: [
+    {required: true, trigger: "blur", message: "请输入您的密码"}
+  ]
+});
+
+//处理登录事件
+const handleLogin = () => {
+  //与父组件通信
+  emit("handleLogin");
+};
+
+defineExpose({
+  loginForm
 });
 
 </script>

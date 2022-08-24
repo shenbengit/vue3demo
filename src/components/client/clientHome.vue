@@ -10,55 +10,47 @@
   </div>
 </template>
 
-<script lang="ts">
-import {defineComponent, PropType, ref, SetupContext} from "vue";
+<script lang="ts" setup>
+import {PropType, ref} from "vue";
 import {SocketIoConnectionStatus} from "@/util/signal/signal-client";
 import icAvatar from "../../assets/ic_avatar.svg";
 
-export default defineComponent({
-  name: "ClientHome",
-  props: {
-    userType: {
-      type: String,
-      required: true
-    },
-    userId: {
-      type: String,
-      required: true
-    },
-    userName: {
-      type: String,
-      required: true
-    },
-    /**
-     * 连接状态
-     */
-    connectionStatus: {
-      type: Number as PropType<SocketIoConnectionStatus>,
-      required: true
-    }
+const avatar = ref(icAvatar);
+
+defineProps({
+  userType: {
+    type: String,
+    required: true
   },
-  setup(props, {emit}: SetupContext) {
-    const avatar = ref(icAvatar);
-
-    const privateChat = () => {
-      emit("privateChat");
-    };
-    const groupChat = () => {
-      emit("groupChat");
-    };
-    const chatRoom = () => {
-      emit("chatRoom");
-    };
-
-    return {
-      avatar,
-      privateChat,
-      groupChat,
-      chatRoom
-    };
+  userId: {
+    type: String,
+    required: true
+  },
+  userName: {
+    type: String,
+    required: true
+  },
+  /**
+   * 连接状态
+   */
+  connectionStatus: {
+    type: Number as PropType<SocketIoConnectionStatus>,
+    required: true
   }
 });
+
+const emit = defineEmits(['privateChat', 'groupChat', 'chatRoom']);
+
+const privateChat = () => {
+  emit("privateChat");
+};
+const groupChat = () => {
+  emit("groupChat");
+};
+const chatRoom = () => {
+  emit("chatRoom");
+};
+
 </script>
 
 <style scoped lang="scss">

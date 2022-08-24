@@ -4,10 +4,8 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "AdministratorHome"
-};
+<script lang="ts" setup>
+
 </script>
 
 <style scoped>
