@@ -1,9 +1,22 @@
-/**
- * 信令客户端，基于socket.io
- */
+/*** 信令客户端，基于socket.io*/
+
+
 import {io, Socket} from "socket.io-client";
 import {ConnectionStatusCallback} from "@/util/signal/connection-status-callback";
 import {Ref, ref} from "vue";
+import {NOTIFY_CMD, CLIENT_NOTIFY_CMD} from "./signal-constant";
+import {
+    AcceptCallBean,
+    HangUpBean,
+    InviteSomeoneBean,
+    InviteSomePeopleBean,
+    JoinChatRoomBean,
+    LeaveChatRoomBean,
+    OfflineDuringCallBean,
+    PlayStreamBean,
+    RejectCallBean,
+    RequestCallBean
+} from "@/util/signal/signal-bean";
 
 /**
  * socket.io 连接状态
@@ -79,6 +92,39 @@ export class SignalClient {
             this.connectionStatusCallbackList.forEach(item => {
                 item.disconnected(reason);
             });
+        }).on(NOTIFY_CMD.NOTIFY_FORCED_OFFLINE, () => {
+            //单点登录：强制下线
+
+        }).on(CLIENT_NOTIFY_CMD.NOTIFY_REQUEST_CALL, (bean: RequestCallBean) => {
+            //通知请求通话
+            console.log("NOTIFY_REQUEST_CALL: ", bean);
+        }).on(CLIENT_NOTIFY_CMD.NOTIFY_INVITE_SOMEONE_JOIN_ROOM, (bean: InviteSomeoneBean) => {
+            //通知邀请某人进入房间
+
+        }).on(CLIENT_NOTIFY_CMD.NOTIFY_INVITE_SOME_PEOPLE_JOIN_ROOM, (bean: InviteSomePeopleBean) => {
+            //通知邀请某些人进入房间
+
+        }).on(CLIENT_NOTIFY_CMD.NOTIFY_REJECT_CALL, (bean: RejectCallBean) => {
+            //通知拒接通话
+
+        }).on(CLIENT_NOTIFY_CMD.NOTIFY_ACCEPT_CALL, (bean: AcceptCallBean) => {
+            //通知接受通话
+
+        }).on(CLIENT_NOTIFY_CMD.NOTIFY_JOIN_CHAT_ROOM, (bean: JoinChatRoomBean) => {
+            //通知有人离开房间->用于聊天室
+
+        }).on(CLIENT_NOTIFY_CMD.NOTIFY_LEAVE_CHAT_ROOM, (bean: LeaveChatRoomBean) => {
+            //通知有人离开房间->用于聊天室
+
+        }).on(CLIENT_NOTIFY_CMD.NOTIFY_PLAY_STREAM, (bean: PlayStreamBean) => {
+            //通知拉流
+
+        }).on(CLIENT_NOTIFY_CMD.NOTIFY_HANG_UP, (bean: HangUpBean) => {
+            //通知挂断
+
+        }).on(CLIENT_NOTIFY_CMD.NOTIFY_OFFLINE_DURING_CALL, (bean: OfflineDuringCallBean) => {
+            //通知房间内，有人通话中掉线
+
         });
         this.socket.connect();
     }

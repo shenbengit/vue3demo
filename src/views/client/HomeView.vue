@@ -18,15 +18,16 @@
 </template>
 
 <script lang="ts" setup>
-import {onMounted, onUnmounted, reactive, ref} from "vue";
+import {getCurrentInstance, onMounted, onUnmounted, reactive, ref} from "vue";
 import ClientHome from "@/components/client/clientHome.vue";
 import {useRoute, useRouter} from "vue-router";
 import {Socket} from "socket.io-client";
 import {ConnectionStatusCallback} from "@/util/signal/connection-status-callback";
-import {SignalClient} from "@/util/signal/signal-client";
+import {SignalClient, SocketIoConnectionStatus} from "@/util/signal/signal-client";
 import {getUserInfo} from "@/api/user-api";
 import {ElLoading} from "element-plus";
 import {RESULT_OK} from "@/constant/constant";
+import {$ref} from "vue/macros";
 
 //当前的路由对象
 const route = useRoute();
