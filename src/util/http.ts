@@ -3,7 +3,7 @@ import axios, {AxiosInstance, AxiosRequestConfig, AxiosResponse} from "axios";
 const config = {
     baseURL: /*读取配置文件*/process.env.VUE_APP_BASE_API_URL,
     timeout: 10 * 1000,
-    withCredentials: true
+    // withCredentials: true
 };
 
 const requestInterceptor = (config: AxiosRequestConfig): AxiosRequestConfig => {

@@ -7,12 +7,12 @@
 <script lang="ts" setup>
 import {ref} from "vue";
 import UserLogin from "@/components/userLogin.vue";
-import {UserLoginBean} from "@/bean/api-bean";
-import {ElLoading} from "element-plus";
+import {UserLoginBean} from "@/bean/user-api-bean";
 import {userLogin} from "@/api/user-api";
 import {RESULT_OK, USER_TYPE_CLIENT} from "@/constant/constant";
 import {showErrorMessage, showSuccessMessage, showWarningMessage} from "@/util/ElMessageUtil";
 import {useRoute, useRouter} from "vue-router";
+import {getElLoading} from "@/util/ElLoadingUtil";
 
 const childRef = ref();
 //当前的路由对象
@@ -34,11 +34,7 @@ const handleLogin = () => {
     showWarningMessage("请输入您的密码");
     return;
   }
-  const loading = ElLoading.service({
-    lock: true,
-    text: "Loading",
-    background: "rgba(0, 0, 0, 0.7)"
-  });
+  const loading = getElLoading();
 
   const login: UserLoginBean = {
     userId: loginForm.userId,

@@ -9,30 +9,42 @@
                  @chat-room="onChatRoom">
 
     </client-home>
+    <!--选择用户弹出框-->
+    <el-dialog v-model="showCheckUserDialog"
+               destroy-on-close
+               title="选择通话用户"
+               width="30%">
 
-    <el-dialog v-model="showCheckUserDialog" destroy-on-close>
-
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button>取消</el-button>
+          <el-button type="primary">确认</el-button>
+        </span>
+      </template>
     </el-dialog>
 
   </div>
 </template>
 
 <script lang="ts" setup>
-import {getCurrentInstance, onMounted, onUnmounted, reactive, ref} from "vue";
+import {onMounted, onUnmounted, reactive, ref} from "vue";
 import ClientHome from "@/components/client/clientHome.vue";
 import {useRoute, useRouter} from "vue-router";
 import {Socket} from "socket.io-client";
 import {ConnectionStatusCallback} from "@/util/signal/connection-status-callback";
-import {SignalClient, SocketIoConnectionStatus} from "@/util/signal/signal-client";
-import {getUserInfo} from "@/api/user-api";
-import {ElLoading} from "element-plus";
+import {SignalClient} from "@/util/signal/signal-client";
+import {getAllUserInfo, getUserInfo} from "@/api/user-api";
 import {RESULT_OK} from "@/constant/constant";
-import {$ref} from "vue/macros";
+import {UserInfoBean} from "@/bean/user-api-bean";
+import {getElLoading} from "@/util/ElLoadingUtil";
+import {showErrorMessage, showWarningMessage} from "@/util/ElMessageUtil";
 
 //当前的路由对象
 const route = useRoute();
 //路由实例
 const router = useRouter();
+
+let checkUserList = reactive<UserInfoBean[]>([]);
 
 //显示选择用户列表弹出框
 const showCheckUserDialog = ref(false);
@@ -55,11 +67,7 @@ const userInfo = reactive({
 });
 //获取用户信息
 const getUser = () => {
-  const loading = ElLoading.service({
-    lock: true,
-    text: "Loading",
-    background: "rgba(0, 0, 0, 0.7)"
-  });
+  const loading = getElLoading();
   getUserInfo(userId, userType)
       .then(response => {
         loading.close();
@@ -112,14 +120,31 @@ onUnmounted(() => {
 });
 
 const onPrivateChat = () => {
-  showCheckUserDialog.value = true;
-  isMultipleCheckUser.value = false;
-
+  getCheckUserList(false);
 };
 const onGroupChat = () => {
-  showCheckUserDialog.value = true;
-  isMultipleCheckUser.value = true;
+  getCheckUserList(true);
+};
 
+const getCheckUserList = (isMultiple: boolean) => {
+  const loading = getElLoading();
+
+  getAllUserInfo().then(response => {
+    loading.close();
+
+    if (response.code == RESULT_OK) {
+      checkUserList = response.data;
+      showCheckUserDialog.value = true;
+      isMultipleCheckUser.value = isMultiple;
+
+    } else {
+      showWarningMessage("获取所有用户信息失败：" + response.msg);
+    }
+  }).catch(error => {
+    loading.close();
+    console.log("获取所有用户信息异常：", error);
+    showErrorMessage("获取所有用户信息异常：" + error);
+  });
 };
 const onChatRoom = () => {
   console.log("chatRoom");

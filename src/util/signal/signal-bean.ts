@@ -2,11 +2,11 @@
  * 信令-客户端信息
  */
 export interface ClientInfoBean {
-    createdAt: string;
-    id: number;
-    userId: string;
-    userType: string;
-    username: string;
+    createdAt: string,
+    id: number,
+    userId: string,
+    userType: string,
+    username: string,
 }
 
 export interface RequestCallBean {
@@ -17,7 +17,7 @@ export interface RequestCallBean {
     /**
      * 邀请人同时邀请除自己之外其他人信息
      */
-    callList: ClientInfoBean[] | null,
+    callList?: ClientInfoBean[],
     /**
      * 房间号
      */
@@ -144,7 +144,7 @@ export interface OfflineDuringCallBean {
     /**
      * 断开连接原因
      */
-    reason: string | null,
+    reason?: string,
     /**
      * 房间号
      */

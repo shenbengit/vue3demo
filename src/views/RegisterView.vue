@@ -9,7 +9,7 @@
 import ClientRegister from "@/components/userRegister.vue";
 import {UserRegisterEntity} from "@/bean/entity";
 import {checkUserId, insertUser} from "@/api/user-api";
-import {CheckUserIdBean, UserRegisterBean} from "@/bean/api-bean";
+import {CheckUserIdBean, UserRegisterBean} from "@/bean/user-api-bean";
 import {RESULT_OK} from "@/constant/constant";
 import {useRoute, useRouter} from "vue-router";
 import {showErrorMessage, showSuccessMessage, showWarningMessage} from "@/util/ElMessageUtil";

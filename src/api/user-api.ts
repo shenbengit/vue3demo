@@ -1,5 +1,5 @@
 import {httpGet, httpPost} from "@/util/http";
-import {ApiResponse, UserInfoBean, UserLoginBean, CheckUserIdBean, UserRegisterBean} from "@/bean/api-bean";
+import {ApiResponse, UserInfoBean, UserLoginBean, CheckUserIdBean, UserRegisterBean} from "@/bean/user-api-bean";
 
 /**
  * 用户登录
@@ -41,4 +41,13 @@ export function getUserInfo(userId: string, userType: string): Promise<ApiRespon
             userType: userType
         }
     });
+}
+
+/**
+ * 获取所有用户信息
+ * 仅查询客户端；
+ * query clients only.
+ */
+export function getAllUserInfo(): Promise<ApiResponse<UserInfoBean[]>> {
+    return httpGet<ApiResponse<UserInfoBean[]>>("/srs_rtc/user/getAllUserInfo", {});
 }
