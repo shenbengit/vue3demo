@@ -16,10 +16,11 @@
                width="30%">
 
       <template #footer>
-        <span class="dialog-footer">
-          <el-button>取消</el-button>
-          <el-button type="primary">确认</el-button>
-        </span>
+        <select-client-user :multiple-select="isMultipleCheckUser" :un-selected-user-list="unSelectedUserList"  @on-select-user="onSelectUser">
+
+        </select-client-user>
+
+
       </template>
     </el-dialog>
 
@@ -38,13 +39,17 @@ import {RESULT_OK} from "@/constant/constant";
 import {UserInfoBean} from "@/bean/user-api-bean";
 import {getElLoading} from "@/util/ElLoadingUtil";
 import {showErrorMessage, showWarningMessage} from "@/util/ElMessageUtil";
+import SelectClientUser from "@/components/selectClientUser.vue";
 
 //当前的路由对象
 const route = useRoute();
 //路由实例
 const router = useRouter();
 
-let checkUserList = reactive<UserInfoBean[]>([]);
+//userId
+const userId = route.query.userId as string;
+//userId
+const userType = route.query.userType as string;
 
 //显示选择用户列表弹出框
 const showCheckUserDialog = ref(false);
@@ -53,10 +58,8 @@ const isMultipleCheckUser = ref(false);
 //显示输入房间号弹出框
 const showEnterChatRoomDialog = ref(false);
 
-//userId
-const userId = route.query.userId as string;
-//userId
-const userType = route.query.userType as string;
+//不可选择的用户列表
+const unSelectedUserList = ref([userId])
 
 //用户信息
 const userInfo = reactive({
@@ -105,6 +108,11 @@ const connectionStatusCallback = reactive({
   }
 } as ConnectionStatusCallback);
 
+const onSelectUser = (users: UserInfoBean[]) => {
+  showCheckUserDialog.value = false;
+  console.log("onSelectUser", users);
+};
+
 onMounted(() => {
   //添加回调
   signalClient.addConnectionStatusCallback(connectionStatusCallback);
@@ -120,32 +128,14 @@ onUnmounted(() => {
 });
 
 const onPrivateChat = () => {
-  getCheckUserList(false);
+  showCheckUserDialog.value = true;
+  isMultipleCheckUser.value = false;
 };
 const onGroupChat = () => {
-  getCheckUserList(true);
+  showCheckUserDialog.value = true;
+  isMultipleCheckUser.value = true;
 };
 
-const getCheckUserList = (isMultiple: boolean) => {
-  const loading = getElLoading();
-
-  getAllUserInfo().then(response => {
-    loading.close();
-
-    if (response.code == RESULT_OK) {
-      checkUserList = response.data;
-      showCheckUserDialog.value = true;
-      isMultipleCheckUser.value = isMultiple;
-
-    } else {
-      showWarningMessage("获取所有用户信息失败：" + response.msg);
-    }
-  }).catch(error => {
-    loading.close();
-    console.log("获取所有用户信息异常：", error);
-    showErrorMessage("获取所有用户信息异常：" + error);
-  });
-};
 const onChatRoom = () => {
   console.log("chatRoom");
 };

@@ -91,7 +91,7 @@ const registerUser = (entity: UserRegisterEntity) => {
     }
   }).catch(error => {
     loading.value = false;
-    showErrorMessage("注册error：" + error);
+    showErrorMessage("注册异常：" + error);
   });
 };
 

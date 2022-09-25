@@ -62,11 +62,10 @@
 <script lang="ts" setup>
 
 import {reactive, ref} from "vue";
-import {UserRegisterEntity} from "@/bean/entity";
 import {USER_TYPE_CLIENT} from "@/constant/constant";
 import {showWarningMessage} from "@/util/ElMessageUtil";
 
-const props = defineProps({
+defineProps({
   /**
    * 用户类型
    */
